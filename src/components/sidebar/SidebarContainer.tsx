@@ -29,13 +29,13 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
       }`}>
         <div className="flex items-center min-w-0">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-sm">
-            <span className="text-white font-bold text-sm">DC</span>
+            <span className="text-white font-bold text-sm">IJ</span>
           </div>
           {!isCollapsed && (
             <span className={`ml-3 text-lg font-semibold truncate ${
               isDarkMode ? 'text-white' : 'text-gray-900'
             }`}>
-              Dress Code
+              Mariage Israel Justesse
             </span>
           )}
         </div>

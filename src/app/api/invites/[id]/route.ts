@@ -1,36 +1,41 @@
 // app/api/invites/[id]/route.ts
 import prisma from '@/lib/client';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 // GET: récupération d'un invité par ID
 export async function GET(
-  req: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
+    const { searchParams } = new URL(request.url)
+    const includePreferences = searchParams.get('include') === 'preferences'
 
     const invite = await prisma.invite.findUnique({
-      where: { id },
-      include: {
+      where: { id: params.id },
+      include: includePreferences ? {
         table: true,
-      }
-    });
+        boissons: true,
+        livreOr: true,
+        cadeaux: true,
+      } : {
+        table: true,
+      },
+    })
 
     if (!invite) {
       return NextResponse.json(
-        { message: 'Invité non trouvé.' },
+        { error: 'Invité non trouvé' },
         { status: 404 }
-      );
+      )
     }
 
-    return NextResponse.json(invite, { status: 200 });
+    return NextResponse.json(invite)
   } catch (error) {
-    console.error('[INVITE_GET_BY_ID]', error);
     return NextResponse.json(
-      { message: 'Erreur lors de la récupération de l\'invité.', error },
+      { error: 'Erreur lors de la récupération' },
       { status: 500 }
-    );
+    )
   }
 }
 

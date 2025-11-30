@@ -3,11 +3,11 @@
 
 generator client {
   provider = "prisma-client-js"
-    output   = "../src/generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql" // ou "mysql", "sqlite" selon votre base de données
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -28,6 +28,30 @@ enum StatutConfirmation {
   EN_ATTENTE
 }
 
+enum TypeBoisson {
+  COCA_COLA
+  FANTA
+  BOGA
+  JUS_DE_FRUIT
+  CELESTIA
+}
+
+enum CategorieCadeau {
+  APPAREILS_ELECTROMENAGERS
+  MEUBLES
+  USTENSILES_CUISINE
+  DONS_ESPECES
+}
+
+enum AppareilElectromenager {
+  AIR_FRYER
+  MACHINE_A_LAVER
+  FRIGO
+  MIXEUR
+  TELEVISION
+  MINI_FOUR_ELECTRIQUE
+}
+
 model Invite {
   id          String              @id @default(cuid())
   nom         String
@@ -36,10 +60,73 @@ model Invite {
   telephone   String?
   confirme    StatutConfirmation  @default(EN_ATTENTE)
   assiste     Boolean?            // null = pas encore le jour J, true = était présent, false = absent
+  
+  // Relations
   tableId     String
   table       Table               @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  
+  // Préférences de boissons
+  boissons    BoissonPreference[]
+  
+  // Livre d'or
+  livreOr     LivreOr?
+  
+  // Cadeaux
+  cadeaux     Cadeau[]
+  
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 
   @@map("invites")
+}
+
+// Table pour les préférences de boissons (relation many-to-many)
+model BoissonPreference {
+  id        String      @id @default(cuid())
+  inviteId  String
+  invite    Invite      @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  boisson   TypeBoisson
+  quantite  Int         @default(1) // Quantité souhaitée
+  createdAt DateTime    @default(now())
+
+  @@unique([inviteId, boisson]) // Un invité ne peut sélectionner qu'une fois chaque boisson
+  @@map("boisson_preferences")
+}
+
+// Table pour le livre d'or (one-to-one avec Invite)
+model LivreOr {
+  id        String   @id @default(cuid())
+  inviteId  String   @unique
+  invite    Invite   @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  message   String   @default("Toutes nos félicitations pour votre mariage ! Nous vous souhaitons tout le bonheur du monde et une vie remplie d'amour, de joie et de complicité. Que votre union soit bénie et que chaque jour soit une nouvelle célébration de votre amour.")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("livre_or")
+}
+
+// Table pour les cadeaux
+model Cadeau {
+  id                      String                    @id @default(cuid())
+  inviteId                String
+  invite                  Invite                    @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  categorie               CategorieCadeau
+  
+  // Pour les appareils électroménagers
+  appareilElectromenager  AppareilElectromenager?
+  
+  // Pour les meubles et ustensiles (description libre)
+  description             String?
+  
+  // Pour les dons en espèces
+  montantEspeces          Float?                    // Montant en devise locale
+  
+  // Champs communs
+  estOffert               Boolean                   @default(false) // Pour suivre si le cadeau a été offert
+  notes                   String?                   // Notes additionnelles
+  
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+
+  @@map("cadeaux")
 }
