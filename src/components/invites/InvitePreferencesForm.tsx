@@ -38,7 +38,8 @@ interface InvitePreferencesFormProps {
   inviteId: string
 }
 
-export default function InvitePreferencesForm({ inviteId }: InvitePreferencesFormProps) {
+export default function 
+({ inviteId }: InvitePreferencesFormProps) {
   const { isDarkMode } = useTheme()
   const { setMessage } = useMessages()
   
@@ -249,7 +250,7 @@ export default function InvitePreferencesForm({ inviteId }: InvitePreferencesFor
           <div className="flex items-center space-x-3">
             <BookOpen size={24} className="text-blue-500" />
             <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Livre d'or
+              Livre d{"'"}or
             </h3>
           </div>
           {openSections.livreOr ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

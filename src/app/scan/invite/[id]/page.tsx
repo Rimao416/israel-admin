@@ -374,7 +374,7 @@ export default function InviteCompletePage() {
                 : 'bg-white border-gray-200'
             }`}>
               <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Statut de l'invitation
+                Statut de l{"'"}invitation
               </h3>
               <div className="grid grid-cols-1 gap-4">
                 <div className={`p-4 rounded-xl border ${
