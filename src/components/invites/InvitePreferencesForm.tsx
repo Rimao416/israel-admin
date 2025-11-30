@@ -38,8 +38,7 @@ interface InvitePreferencesFormProps {
   inviteId: string
 }
 
-export default function 
-({ inviteId }: InvitePreferencesFormProps) {
+function InvitePreferencesForm({ inviteId }: InvitePreferencesFormProps) {
   const { isDarkMode } = useTheme()
   const { setMessage } = useMessages()
   
@@ -469,3 +468,7 @@ export default function
     </div>
   )
 }
+
+InvitePreferencesForm.displayName = 'InvitePreferencesForm'
+
+export default InvitePreferencesForm
