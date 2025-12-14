@@ -253,7 +253,7 @@ export default function InviteForm({
               <label htmlFor="assiste" className={`text-sm font-medium ${
                 isDarkMode ? 'text-gray-200' : 'text-gray-700'
               }`}>
-                A assisté à l'événement
+                A assisté à l{"'"}événement
               </label>
             </div>
           </FormField>
