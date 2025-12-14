@@ -1,18 +1,21 @@
 import prisma from '@/lib/client'
 import { NextRequest, NextResponse } from 'next/server'
+
 // app/api/invites/[id]/livre-or/route.ts
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     const livreOr = await prisma.livreOr.findUnique({
-      where: { inviteId: params.id },
+      where: { inviteId: id },
     })
 
     if (!livreOr) {
       return NextResponse.json(
-        { error: 'Livre d\'or non trouvé' },
+        { error: 'Livre d&apos;or non trouvé' },
         { status: 404 }
       )
     }
@@ -28,15 +31,16 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json()
     const { message } = body
 
     // Vérifier si l'invité existe
     const invite = await prisma.invite.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!invite) {
@@ -48,10 +52,10 @@ export async function POST(
 
     // Créer ou mettre à jour le livre d'or
     const livreOr = await prisma.livreOr.upsert({
-      where: { inviteId: params.id },
+      where: { inviteId: id },
       update: { message },
       create: {
-        inviteId: params.id,
+        inviteId: id,
         message,
       },
     })
@@ -59,7 +63,7 @@ export async function POST(
     return NextResponse.json(livreOr)
   } catch (error) {
     return NextResponse.json(
-      { error: 'Erreur lors de la mise à jour du livre d\'or' },
+      { error: 'Erreur lors de la mise à jour du livre d&apos;or' },
       { status: 500 }
     )
   }
@@ -67,11 +71,13 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     await prisma.livreOr.delete({
-      where: { inviteId: params.id },
+      where: { inviteId: id },
     })
 
     return NextResponse.json({ success: true })

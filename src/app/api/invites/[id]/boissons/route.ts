@@ -4,11 +4,13 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     const boissons = await prisma.boissonPreference.findMany({
-      where: { inviteId: params.id },
+      where: { inviteId: id },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -23,15 +25,16 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json()
     const { boisson, quantite = 1 } = body
 
     // Vérifier si l'invité existe
     const invite = await prisma.invite.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!invite) {
@@ -44,7 +47,7 @@ export async function POST(
     // Créer la préférence de boisson
     const preference = await prisma.boissonPreference.create({
       data: {
-        inviteId: params.id,
+        inviteId: id,
         boisson,
         quantite,
       },
@@ -59,7 +62,7 @@ export async function POST(
       )
     }
     return NextResponse.json(
-      { error: 'Erreur lors de l\'ajout de la boisson' },
+      { error: 'Erreur lors de l&apos;ajout de la boisson' },
       { status: 500 }
     )
   }

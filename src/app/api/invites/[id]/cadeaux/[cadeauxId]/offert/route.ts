@@ -4,14 +4,15 @@ import { NextRequest, NextResponse } from "next/server";
 // app/api/invites/[id]/cadeaux/[cadeauId]/offert/route.ts
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; cadeauId: string } }
+  { params }: { params: Promise<{ id: string; cadeauId: string }> }
 ) {
   try {
+    const { cadeauId } = await params;
     const body = await request.json()
     const { estOffert } = body
 
     const cadeau = await prisma.cadeau.update({
-      where: { id: params.cadeauId },
+      where: { id: cadeauId },
       data: { estOffert },
     })
 

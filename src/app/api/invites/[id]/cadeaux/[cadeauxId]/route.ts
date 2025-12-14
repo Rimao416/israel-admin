@@ -1,11 +1,13 @@
 import prisma from "@/lib/client";
 import { NextRequest, NextResponse } from "next/server";
+
 // app/api/invites/[id]/cadeaux/[cadeauId]/route.ts
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; cadeauId: string } }
+  { params }: { params: Promise<{ id: string; cadeauId: string }> }
 ) {
   try {
+    const { cadeauId } = await params;
     const body = await request.json()
     const {
       categorie,
@@ -17,7 +19,7 @@ export async function PUT(
     } = body
 
     const cadeau = await prisma.cadeau.update({
-      where: { id: params.cadeauId },
+      where: { id: cadeauId },
       data: {
         categorie,
         appareilElectromenager,
@@ -39,11 +41,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; cadeauId: string } }
+  { params }: { params: Promise<{ id: string; cadeauId: string }> }
 ) {
   try {
+    const { cadeauId } = await params;
+    
     await prisma.cadeau.delete({
-      where: { id: params.cadeauId },
+      where: { id: cadeauId },
     })
 
     return NextResponse.json({ success: true })

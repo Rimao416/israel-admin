@@ -1,4 +1,12 @@
-// types/table.type.ts
+// types/table.types.ts
+import { 
+  BoissonPreference, 
+  LivreOr, 
+  Cadeau,
+  StatutConfirmation 
+} from './invite-extended.types';
+
+export { StatutConfirmation };
 
 export type TableBase = {
   numero: number;
@@ -24,12 +32,6 @@ export type UpdateTableData = TableBase & {
 };
 
 // Types pour les invités
-export enum StatutConfirmation {
-  OUI = 'OUI',
-  NON = 'NON',
-  EN_ATTENTE = 'EN_ATTENTE'
-}
-
 export type InviteBase = {
   nom: string;
   prenom: string;
@@ -40,11 +42,17 @@ export type InviteBase = {
   tableId: string;
 };
 
+// ✅ CORRECTION: Ajouter les relations optionnelles au type Invite
 export type Invite = InviteBase & {
   id: string;
   createdAt: string | Date;
   updatedAt: string | Date;
   table?: Table;
+  
+  // Relations optionnelles (pour les réponses API enrichies)
+  boissons?: BoissonPreference[];
+  livreOr?: LivreOr | null;
+  cadeaux?: Cadeau[];
 };
 
 export type InviteFormData = Omit<InviteBase, 'tableId'> & {

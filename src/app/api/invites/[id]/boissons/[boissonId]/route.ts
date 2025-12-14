@@ -4,11 +4,13 @@ import { NextRequest, NextResponse } from 'next/server'
 // app/api/invites/[id]/boissons/[boissonId]/route.ts
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; boissonId: string } }
+  { params }: { params: Promise<{ id: string; boissonId: string }> }
 ) {
   try {
+    const { boissonId } = await params;
+    
     await prisma.boissonPreference.delete({
-      where: { id: params.boissonId },
+      where: { id: boissonId },
     })
 
     return NextResponse.json({ success: true })
@@ -22,14 +24,15 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; boissonId: string } }
+  { params }: { params: Promise<{ id: string; boissonId: string }> }
 ) {
   try {
+    const { boissonId } = await params;
     const body = await request.json()
     const { quantite } = body
 
     const preference = await prisma.boissonPreference.update({
-      where: { id: params.boissonId },
+      where: { id: boissonId },
       data: { quantite },
     })
 

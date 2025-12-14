@@ -13,6 +13,7 @@ import { useMessages } from '@/context/useMessage'
 import { InviteFormData } from '@/components/forms/InviteForm'
 import { useTheme } from '@/context/ThemeContext'
 import { useQuery } from '@tanstack/react-query'
+import { StatutConfirmation } from '@/types/table.types'
 
 export default function EditInvitePage() {
   const params = useParams()
@@ -30,7 +31,7 @@ export default function EditInvitePage() {
   // Vérification de l'ID et redirection si invalide
   useEffect(() => {
     if (!inviteId) {
-      setMessage('ID d\'invité invalide', 'error')
+      setMessage('ID d&apos;invité invalide', 'error')
       router.push('/dashboard/invites')
     }
   }, [inviteId, router, setMessage])
@@ -42,7 +43,19 @@ export default function EditInvitePage() {
     status,
   } = useQuery<InviteEtendu>({
     queryKey: ['invite', inviteId],
-    queryFn: () => getInviteById(inviteId),
+    queryFn: async () => {
+      const data = await getInviteById(inviteId)
+      // Transformer Invite en InviteEtendu
+      return {
+        ...data,
+        confirme: data.confirme || StatutConfirmation.EN_ATTENTE,
+        createdAt: new Date(data.createdAt),
+        updatedAt: new Date(data.updatedAt),
+        boissons: data.boissons || [],
+        livreOr: data.livreOr || null,
+        cadeaux: data.cadeaux || [],
+      } as InviteEtendu
+    },
     enabled: !!inviteId,
   })
 
@@ -94,7 +107,7 @@ export default function EditInvitePage() {
         tableId: data.tableId,
       }
 
-      console.log('Données envoyées à l\'API:', inviteUpdateData);
+      console.log('Données envoyées à l&apos;API:', inviteUpdateData);
 
       const updatedInvite = await updateInvite(inviteUpdateData)
 
@@ -104,7 +117,7 @@ export default function EditInvitePage() {
         prenom: updatedInvite.prenom,
         email: updatedInvite.email,
         telephone: updatedInvite.telephone,
-        confirme: updatedInvite.confirme,
+        confirme: updatedInvite.confirme || StatutConfirmation.EN_ATTENTE,
         assiste: updatedInvite.assiste,
         tableId: updatedInvite.tableId,
         createdAt: new Date(updatedInvite.createdAt),

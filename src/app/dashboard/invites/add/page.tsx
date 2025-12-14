@@ -12,6 +12,7 @@ import { useMessages } from '@/context/useMessage'
 import { InviteFormData } from '@/components/forms/InviteForm'
 import { useTheme } from '@/context/ThemeContext'
 import { useInviteStore } from '@/store/inviteStore'
+import { StatutConfirmation } from '@/generated/prisma'
 
 export default function AddInvitePage() {
   const router = useRouter()
@@ -66,7 +67,7 @@ export default function AddInvitePage() {
         prenom: newInvite.prenom,
         email: newInvite.email,
         telephone: newInvite.telephone,
-        confirme: newInvite.confirme,
+ confirme: data.confirme ?? StatutConfirmation.EN_ATTENTE,
         assiste: newInvite.assiste,
         tableId: newInvite.tableId,
         createdAt: new Date(newInvite.createdAt),

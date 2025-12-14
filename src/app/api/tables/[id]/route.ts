@@ -6,10 +6,10 @@ import prisma from '@/lib/client';
 // GET: récupération d'une table par ID
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const table = await prisma.table.findUnique({
       where: { id },
@@ -47,10 +47,10 @@ export async function GET(
 // PUT: mise à jour d'une table
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
     const { numero, nom } = body;
 
@@ -112,10 +112,10 @@ export async function PUT(
 // DELETE: suppression d'une table
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.table.delete({
       where: { id }

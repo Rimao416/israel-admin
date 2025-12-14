@@ -1,13 +1,16 @@
 import prisma from "@/lib/client"
 import { NextRequest, NextResponse } from "next/server"
+
 // app/api/invites/[id]/cadeaux/route.ts
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     const cadeaux = await prisma.cadeau.findMany({
-      where: { inviteId: params.id },
+      where: { inviteId: id },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -22,9 +25,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json()
     const {
       categorie,
@@ -36,7 +40,7 @@ export async function POST(
 
     // Vérifier si l'invité existe
     const invite = await prisma.invite.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!invite) {
@@ -49,7 +53,7 @@ export async function POST(
     // Créer le cadeau
     const cadeau = await prisma.cadeau.create({
       data: {
-        inviteId: params.id,
+        inviteId: id,
         categorie,
         appareilElectromenager,
         description,
@@ -61,7 +65,7 @@ export async function POST(
     return NextResponse.json(cadeau, { status: 201 })
   } catch (error) {
     return NextResponse.json(
-      { error: 'Erreur lors de l\'ajout du cadeau' },
+      { error: 'Erreur lors de l&apos;ajout du cadeau' },
       { status: 500 }
     )
   }

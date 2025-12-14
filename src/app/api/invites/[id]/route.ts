@@ -5,14 +5,15 @@ import { NextRequest, NextResponse } from 'next/server';
 // GET: récupération d'un invité par ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { searchParams } = new URL(request.url)
     const includePreferences = searchParams.get('include') === 'preferences'
 
     const invite = await prisma.invite.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: includePreferences ? {
         table: true,
         boissons: true,
@@ -42,10 +43,10 @@ export async function GET(
 // PUT: mise à jour d'un invité
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
     const { nom, prenom, email, telephone, confirme, assiste, tableId } = body;
 
@@ -77,7 +78,7 @@ export async function PUT(
 
     if (!table) {
       return NextResponse.json(
-        { message: 'La table spécifiée n\'existe pas.' },
+        { message: 'La table spécifiée n&apos;existe pas.' },
         { status: 400 }
       );
     }
@@ -102,7 +103,7 @@ export async function PUT(
   } catch (error) {
     console.error('[INVITE_PUT]', error);
     return NextResponse.json(
-      { message: 'Erreur lors de la mise à jour de l\'invité.', error },
+      { message: 'Erreur lors de la mise à jour de l&apos;invité.', error },
       { status: 500 }
     );
   }
@@ -111,10 +112,10 @@ export async function PUT(
 // DELETE: suppression d'un invité
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.invite.delete({
       where: { id }
@@ -127,7 +128,7 @@ export async function DELETE(
   } catch (error) {
     console.error('[INVITE_DELETE]', error);
     return NextResponse.json(
-      { message: 'Erreur lors de la suppression de l\'invité.', error },
+      { message: 'Erreur lors de la suppression de l&apos;invité.', error },
       { status: 500 }
     );
   }
