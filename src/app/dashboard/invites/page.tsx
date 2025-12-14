@@ -1,6 +1,5 @@
 // app/dashboard/invites/page.tsx
 'use client';
-
 import { ManagementPageConfig } from "@/types/management.type";
 import { Invite, StatutConfirmation } from "@/types/table.types";
 import { ColumnDef } from "@tanstack/react-table";
@@ -14,7 +13,7 @@ import { useDeleteInvite } from "@/hooks/invites/useDeleteInvite";
 import { useInviteStore } from "@/store/inviteStore";
 import { useUpdateInviteConfirmation } from "@/hooks/invites/useUpdateInviteConfirmation";
 import { useUpdateInviteAttendance } from "@/hooks/invites/useUpdateInviteAttendance";
-
+import { exportInvitesToPDF } from "@/components/exportInvitesPDF";
 export default function InvitesPage() {
   const router = useRouter();
   const { data: invites, isLoading, isFetching, error, refetch } = useInvites();
@@ -33,6 +32,15 @@ export default function InvitesPage() {
     inviteIds: [],
     inviteName: ''
   });
+
+  // 🔥 Fonction pour exporter en PDF
+  const handleExportPDF = useCallback(() => {
+    if (invites && invites.length > 0) {
+      exportInvitesToPDF(invites);
+    } else {
+      alert('Aucun invité à exporter');
+    }
+  }, [invites]);
 
   // Ouvrir le modal de suppression
   const handleDeleteClick = useCallback((id: string) => {
@@ -173,7 +181,7 @@ export default function InvitesPage() {
             EN_ATTENTE: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'En attente' }
           };
           const config = statusConfig[status];
-          
+         
           return (
             <select
               data-no-row-click
@@ -200,7 +208,7 @@ export default function InvitesPage() {
         header: 'Présence',
         cell: ({ getValue, row }) => {
           const assiste = getValue() as boolean | null;
-          
+         
           if (assiste === null) {
             return (
               <select
@@ -224,7 +232,7 @@ export default function InvitesPage() {
               </select>
             );
           }
-          
+         
           return (
             <select
               data-no-row-click
@@ -254,6 +262,11 @@ export default function InvitesPage() {
       label: 'Ajouter un invité',
       onClick: () => router.push('/dashboard/invites/add'),
     },
+    // 🔥 Ajout du bouton secondaire pour l'export PDF
+    secondaryButton: {
+      label: 'Exporter PDF',
+      onClick: handleExportPDF,
+    },
     actions: [
       {
         label: 'Voir',
@@ -273,7 +286,7 @@ export default function InvitesPage() {
     ],
     filters: filterOptions,
     onViewDetails: (invite) => router.push(`/dashboard/invites/${invite.id}/view`),
-  }), [invites, isLoading, isFetching, error, refetch, router, handleDeleteClick, stats, filterOptions, updateConfirmation, updateAttendance]);
+  }), [invites, isLoading, isFetching, error, refetch, router, handleDeleteClick, handleExportPDF, stats, filterOptions, updateConfirmation, updateAttendance]);
 
   return (
     <DashboardLayout>

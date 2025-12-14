@@ -265,6 +265,7 @@ async function main() {
         { nom: 'BASUME', prenom: 'BEN COUPLE', estCouple: true },
         { nom: 'KAZONGO', prenom: 'COUPLE', estCouple: true },
         { nom: 'CONSTANTINE', prenom: '' },
+        { nom: 'POUR TESTER ', prenom: 'COUPLE TEST' },
       ],
     },
   ];
