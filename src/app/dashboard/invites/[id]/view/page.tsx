@@ -33,7 +33,7 @@ export default function InviteCompletePage() {
   const router = useRouter()
   const { isDarkMode } = useTheme()
   const inviteId = String(params.id)
-  
+ 
   const [activeTab, setActiveTab] = useState<'info' | 'preferences'>('info')
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function InviteCompletePage() {
 
   const handleMarkPresent = async () => {
     if (!invite) return
-    
+   
     try {
       await updateAttendance.mutateAsync({
         id: invite.id,
@@ -74,7 +74,7 @@ export default function InviteCompletePage() {
 
   const handleMarkAbsent = async () => {
     if (!invite) return
-    
+   
     try {
       await updateAttendance.mutateAsync({
         id: invite.id,
@@ -82,7 +82,7 @@ export default function InviteCompletePage() {
       })
       setMessage('Absence enregistrée', 'success')
     } catch (err) {
-      setMessage('Erreur lors de l\'enregistrement', 'error')
+      setMessage(&apos;Erreur lors de l&apos;enregistrement&apos;, 'error')
     }
   }
 
@@ -157,7 +157,7 @@ export default function InviteCompletePage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <PageHeader
           breadcrumb={["Invités", `${invite.prenom} ${invite.nom}`]}
-          title="Détails de l'invité"
+          title="Détails de l&apos;invité"
         />
 
         {/* En-tête invité */}
@@ -374,7 +374,7 @@ export default function InviteCompletePage() {
                 : 'bg-white border-gray-200'
             }`}>
               <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Statut de l'invitation
+                Statut de l&apos;invitation
               </h3>
               <div className="grid grid-cols-1 gap-4">
                 <div className={`p-4 rounded-xl border ${
