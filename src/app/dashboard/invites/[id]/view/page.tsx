@@ -82,7 +82,7 @@ export default function InviteCompletePage() {
       })
       setMessage('Absence enregistrée', 'success')
     } catch (err) {
-      setMessage(&apos;Erreur lors de l&apos;enregistrement&apos;, 'error')
+      console.log("Erreur")
     }
   }
 
